@@ -21,3 +21,5 @@ IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning
 
 
 [Gradle plugin for GraalVM Native Image]|root:https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html
+
+[Jackson 3]}root:https://www.javadoc.io/doc/tools.jackson.core/jackson-core/3.0.4/tools.jackson.core/module-summary.html
