@@ -1,5 +1,10 @@
 package org.jclaw.jclaw;
 
+import org.springaicommunity.agent.tools.AskUserQuestionTool;
+import org.springaicommunity.agent.tools.FileSystemTools;
+import org.springaicommunity.agent.tools.GrepTool;
+import org.springaicommunity.agent.tools.ShellTools;
+import org.springaicommunity.agent.utils.CommandLineQuestionHandler;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
@@ -9,6 +14,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Map;
 import java.util.Scanner;
 
 @SpringBootApplication
@@ -22,6 +28,16 @@ public class JclawApplication {
     public ChatClient openAiChatClient(OpenAiChatModel chatModel) {
         return ChatClient
                 .builder(chatModel)
+                .defaultTools(AskUserQuestionTool.builder()
+                        .questionHandler(new CommandLineQuestionHandler())
+                        .answersValidation(true)
+                        .build()
+                )
+                .defaultTools(
+                        ShellTools.builder().build(),
+                        FileSystemTools.builder().build(),
+                        GrepTool.builder().build()
+                )
                 .defaultAdvisors(
                         MessageChatMemoryAdvisor.builder(MessageWindowChatMemory
                                         .builder()

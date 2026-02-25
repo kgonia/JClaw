@@ -25,7 +25,8 @@ ext {
 
 dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
-    implementation("org.springaicommunity:spring-ai-agent-utils:0.4.2")
+    implementation("org.springaicommunity:spring-ai-agent-utils:0.5.0")
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
