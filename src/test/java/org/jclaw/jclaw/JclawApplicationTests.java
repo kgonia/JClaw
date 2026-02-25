@@ -1,13 +1,3 @@
-package org.jclaw.jclaw;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
-class JclawApplicationTests {
-
-    @Test
-    void contextLoads() {
-    }
-
-}
+/* Moved to package com.jclaw.agent.JclawApplicationTests
+   This file left as placeholder to keep history. Delete if not needed.
+*/
