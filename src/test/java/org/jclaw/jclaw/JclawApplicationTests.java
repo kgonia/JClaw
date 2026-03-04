@@ -1,3 +1,0 @@
-/* Moved to package com.jclaw.agent.JclawApplicationTests
-   This file left as placeholder to keep history. Delete if not needed.
-*/

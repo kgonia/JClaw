@@ -1,4 +1,4 @@
-package org.jclaw.jclaw.chat.advisor;
+package com.jclaw.agent.chat.advisor;
 
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
