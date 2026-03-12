@@ -1,6 +1,7 @@
 package com.jclaw.agent.chat.tools.claudecode;
 
 import com.jclaw.agent.chat.tools.process.BackgroundProcess;
+import com.jclaw.agent.chat.tools.process.LineDelimitedJsonProcessParser;
 import com.jclaw.agent.chat.tools.process.ProcessOutputListener;
 import com.jclaw.agent.chat.tools.process.ProcessTrace;
 import org.springframework.ai.tool.annotation.Tool;
@@ -77,7 +78,7 @@ public class ClaudeCodeSubagentTools {
             BackgroundProcess<ClaudeStreamEvent> backgroundProcess = BackgroundProcess.start(
                     subagentId,
                     process,
-                    new ClaudeStreamJsonParser(),
+                    new LineDelimitedJsonProcessParser<>(new ClaudeStreamJsonParser()),
                     listener,
                     true
             );

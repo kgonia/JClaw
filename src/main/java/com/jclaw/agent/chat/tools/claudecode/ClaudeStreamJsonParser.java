@@ -1,40 +1,45 @@
 package com.jclaw.agent.chat.tools.claudecode;
 
-import com.jclaw.agent.chat.tools.process.ProcessOutputParser;
+import com.jclaw.agent.chat.tools.process.StreamJsonParser;
+import com.jclaw.agent.chat.tools.process.StreamParseException;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClaudeStreamJsonParser implements ProcessOutputParser<ClaudeStreamEvent> {
+public class ClaudeStreamJsonParser implements StreamJsonParser<ClaudeStreamEvent> {
 
     private static final JsonFactory JSON_FACTORY = new JsonFactory();
     private static final ObjectMapper MAPPER = new ObjectMapper(JSON_FACTORY);
 
     @Override
-    public List<ClaudeStreamEvent> parseLine(String line) throws IOException {
-        if (line == null || line.isBlank()) {
+    public List<ClaudeStreamEvent> parseValue(String value) throws StreamParseException {
+        if (value == null || value.isBlank()) {
             return List.of();
         }
 
-        JsonNode root = MAPPER.readTree(line);
-        if (root == null) {
-            return List.of();
-        }
-
-        List<ClaudeStreamEvent> events = new ArrayList<>();
-        if (root.isArray()) {
-            for (JsonNode node : root) {
-                appendEvent(events, node);
+        try {
+            JsonNode root = MAPPER.readTree(value);
+            if (root == null) {
+                return List.of();
             }
+
+            List<ClaudeStreamEvent> events = new ArrayList<>();
+            if (root.isArray()) {
+                for (JsonNode node : root) {
+                    appendEvent(events, node);
+                }
+            }
+            else if (root.isObject()) {
+                appendEvent(events, root);
+            }
+            return events;
         }
-        else if (root.isObject()) {
-            appendEvent(events, root);
+        catch (Exception e) {
+            throw new StreamParseException("Malformed Claude stream JSON", e);
         }
-        return events;
     }
 
     private void appendEvent(List<ClaudeStreamEvent> events, JsonNode node) {

@@ -18,14 +18,14 @@ class ClaudeStreamJsonParserTest {
 
     @Test
     void returnsNoEventsForBlankInput() throws Exception {
-        assertTrue(parser.parseLine(null).isEmpty());
-        assertTrue(parser.parseLine("").isEmpty());
-        assertTrue(parser.parseLine("   ").isEmpty());
+        assertTrue(parser.parseValue(null).isEmpty());
+        assertTrue(parser.parseValue("").isEmpty());
+        assertTrue(parser.parseValue("   ").isEmpty());
     }
 
     @Test
     void parsesSingleStreamJsonObject() throws Exception {
-        List<ClaudeStreamEvent> events = parser.parseLine("""
+        List<ClaudeStreamEvent> events = parser.parseValue("""
                 {"type":"assistant","session_id":"sess-1","message":{"type":"message","role":"assistant","content":[
                 {"type":"thinking","thinking":"plan"},
                 {"type":"text","text":"hello"}
@@ -56,7 +56,7 @@ class ClaudeStreamJsonParserTest {
 
         List<ClaudeStreamEvent> events = new ArrayList<>();
         for (String line : Files.readAllLines(fixture)) {
-            events.addAll(parser.parseLine(line));
+            events.addAll(parser.parseValue(line));
         }
 
         assertEquals(5, events.size());

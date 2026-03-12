@@ -15,27 +15,42 @@ java {
     }
 }
 
+ext {
+    set('springAiVersion', '2.0.0-M2')
+    set('tambouiVersion', '0.2.0-SNAPSHOT')
+}
+
 repositories {
     mavenCentral()
-}
-
-ext {
-    set('springAiVersion', "2.0.0-M2")
-}
-
-dependencies {
-    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
-    implementation("org.springaicommunity:spring-ai-agent-utils:0.5.0")
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    maven {
+        url = uri('https://central.sonatype.com/repository/maven-snapshots/')
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+        mavenBom "dev.tamboui:tamboui-bom:${tambouiVersion}"
     }
+}
+
+dependencies {
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    implementation 'org.springframework.ai:spring-ai-starter-model-chat-memory-repository-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    runtimeOnly 'com.h2database:h2'
+
+    implementation 'org.springaicommunity:spring-ai-agent-utils:0.5.0'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    implementation 'dev.tamboui:tamboui-toolkit'
+    implementation 'dev.tamboui:tamboui-jline3-backend'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {

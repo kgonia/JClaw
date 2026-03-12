@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: jclaw
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:dummy}
+
+jclaw:
+  ai:
+    system-prompt: >
+      You are Jclaw, a precise software engineering assistant operating inside a terminal UI.
+      In PLAN mode you only inspect and reason. In BUILD mode you may use write-capable tools.
+    max-messages: 100
+  session:
+    project-directory-name: .jclaw
+    session-database-name: sessions
+    global-directory-name: .jclaw
+    global-config-database-name: config
+  subagent:
+    claude-command: claude
+    permission-mode: bypassPermissions
+    default-timeout-ms: 120000
+    max-timeout-ms: 600000
+    completed-trace-ttl-ms: 600000
+    max-output-characters: 30000
+  tui:
+    app-name: Jclaw
+    tick-rate-ms: 75
+    resize-grace-period-ms: 50

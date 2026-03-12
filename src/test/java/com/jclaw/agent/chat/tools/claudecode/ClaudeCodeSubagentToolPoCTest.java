@@ -1,6 +1,7 @@
 package com.jclaw.agent.chat.tools.claudecode;
 
 import com.jclaw.agent.chat.tools.process.BackgroundProcess;
+import com.jclaw.agent.chat.tools.process.LineDelimitedJsonProcessParser;
 import com.jclaw.agent.chat.tools.process.ProcessOutputListener;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +51,7 @@ class ClaudeCodeSubagentToolPoCTest {
         BackgroundProcess<ClaudeStreamEvent> bgProcess = BackgroundProcess.start(
                 "test",
                 process,
-                new ClaudeStreamJsonParser(),
+                new LineDelimitedJsonProcessParser<>(new ClaudeStreamJsonParser()),
                 listener
         );
 
