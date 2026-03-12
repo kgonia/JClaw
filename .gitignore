@@ -38,3 +38,6 @@ out/
 
 # JClaw local state
 .jclaw/
+
+# local secrets
+src/main/resources/application-local.properties
