@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("jclaw.subagent")
 public record ClaudeSubagentProperties(
+        boolean enabled,
         String claudeCommand,
         String permissionMode,
         long defaultTimeoutMs,

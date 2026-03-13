@@ -8,6 +8,9 @@ import org.springaicommunity.agent.tools.ShellTools;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Configuration
 public class ToolConfiguration {
 
@@ -32,11 +35,22 @@ public class ToolConfiguration {
     }
 
     @Bean
-    public ModeAwareToolCatalog modeAwareToolCatalog(WorkspaceReadTools workspaceReadTools, GrepTool grepTool,
-                                                     FileSystemTools fileSystemTools, ShellTools shellTools,
-                                                     com.jclaw.agent.chat.tools.claudecode.ClaudeCodeSubagentTools claudeCodeSubagentTools) {
+    public ModeAwareToolCatalog modeAwareToolCatalog(
+            WorkspaceReadTools workspaceReadTools,
+            GrepTool grepTool,
+            FileSystemTools fileSystemTools,
+            ShellTools shellTools,
+            com.jclaw.agent.chat.tools.claudecode.ClaudeCodeSubagentTools claudeCodeSubagentTools,
+            ClaudeSubagentProperties claudeSubagentProperties) {
+
         Object[] planTools = {workspaceReadTools, grepTool};
-        Object[] buildTools = {workspaceReadTools, grepTool, fileSystemTools, shellTools, claudeCodeSubagentTools};
-        return new ModeAwareToolCatalog(planTools, buildTools);
+
+        List<Object> buildList = new ArrayList<>(
+                List.of(workspaceReadTools, grepTool, fileSystemTools, shellTools));
+        if (claudeSubagentProperties.enabled()) {
+            buildList.add(claudeCodeSubagentTools);
+        }
+
+        return new ModeAwareToolCatalog(planTools, buildList.toArray());
     }
 }

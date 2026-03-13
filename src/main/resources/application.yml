@@ -17,6 +17,7 @@ jclaw:
     global-directory-name: .jclaw
     global-config-database-name: config
   subagent:
+    enabled: false   # set true to activate the ClaudeCodeSubagent tool in BUILD mode
     claude-command: claude
     permission-mode: bypassPermissions
     default-timeout-ms: 120000
