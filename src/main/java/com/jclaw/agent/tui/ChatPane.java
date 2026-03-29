@@ -18,7 +18,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
-import dev.tamboui.widgets.common.ScrollBarPolicy;
+import dev.tamboui.toolkit.elements.RichTextAreaElement.ScrollBarPolicy;
 import dev.tamboui.widgets.input.TextInputState;
 
 import java.util.Arrays;

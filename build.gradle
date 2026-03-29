@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '4.0.2'
     id 'io.spring.dependency-management' version '1.1.7'
-    id 'org.graalvm.buildtools.native' version '0.11.4'
+    id 'org.graalvm.buildtools.native' version '0.11.5'
 }
 
 group = 'org.jclaw'
@@ -15,9 +15,23 @@ java {
     }
 }
 
+// Profile switch from docs-style Gradle property: -PnativeProfile=fast|best (default: best)
+def nativeProfile = providers.gradleProperty('nativeProfile')
+        .map { it.toLowerCase(java.util.Locale.ROOT) }
+        .orElse('best')
+        .get()
+
+if (!(nativeProfile in ['fast', 'best'])) {
+    throw new GradleException("Unsupported nativeProfile '${nativeProfile}'. Supported values: fast, best.")
+}
+
+def nativeQuickBuild = nativeProfile == 'fast'
+def nativeOptimizationArg = nativeQuickBuild ? '-O1' : '-O3'
+def tambouiBindingsResourcePattern = 'dev/tamboui/tui/bindings/.*.properties'
+
 ext {
     set('springAiVersion', '2.0.0-M2')
-    set('tambouiVersion', '0.2.0-SNAPSHOT')
+    set('tambouiVersion', '0.1.0')
 }
 
 repositories {
@@ -33,7 +47,6 @@ repositories {
 dependencyManagement {
     imports {
         mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
-        mavenBom "dev.tamboui:tamboui-bom:${tambouiVersion}"
     }
 }
 
@@ -46,13 +59,68 @@ dependencies {
     implementation 'org.springaicommunity:spring-ai-agent-utils:0.5.0'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    implementation 'dev.tamboui:tamboui-toolkit'
-    implementation 'dev.tamboui:tamboui-jline3-backend'
+    implementation "dev.tamboui:tamboui-toolkit:${tambouiVersion}"
+    implementation "dev.tamboui:tamboui-jline3-backend:${tambouiVersion}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+graalvmNative {
+    binaries {
+        named('main') {
+            quickBuild = nativeQuickBuild
+            buildArgs.addAll(['--no-fallback', nativeOptimizationArg, "-H:IncludeResources=${tambouiBindingsResourcePattern}"])
+        }
+        named('test') {
+            quickBuild = nativeQuickBuild
+            buildArgs.addAll(['--no-fallback', nativeOptimizationArg, "-H:IncludeResources=${tambouiBindingsResourcePattern}"])
+        }
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+tasks.named('nativeCompile') {
+    doFirst {
+        logger.lifecycle("Using GraalVM native profile '{}' (quickBuild={}, optimization={})",
+                nativeProfile, nativeQuickBuild, nativeOptimizationArg)
+    }
+}
+
+tasks.named('nativeTest') {
+    doFirst {
+        logger.lifecycle("Running native tests with profile '{}' (quickBuild={}, optimization={})",
+                nativeProfile, nativeQuickBuild, nativeOptimizationArg)
+    }
+}
+
+tasks.register('nativeCompileFast', GradleBuild) {
+    group = 'build'
+    description = 'Compiles native executable with fast profile.'
+    tasks = ['nativeCompile']
+    startParameter.projectProperties = ['nativeProfile': 'fast']
+}
+
+tasks.register('nativeTestFast', GradleBuild) {
+    group = 'verification'
+    description = 'Runs native tests with fast profile.'
+    tasks = ['nativeTest']
+    startParameter.projectProperties = ['nativeProfile': 'fast']
+}
+
+tasks.register('nativeCompileBest', GradleBuild) {
+    group = 'build'
+    description = 'Compiles native executable with best profile.'
+    tasks = ['nativeCompile']
+    startParameter.projectProperties = ['nativeProfile': 'best']
+}
+
+tasks.register('nativeTestBest', GradleBuild) {
+    group = 'verification'
+    description = 'Runs native tests with best profile.'
+    tasks = ['nativeTest']
+    startParameter.projectProperties = ['nativeProfile': 'best']
 }

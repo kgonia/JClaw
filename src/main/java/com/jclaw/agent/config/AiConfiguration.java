@@ -9,6 +9,7 @@ import com.jclaw.agent.tui.session.SessionRepository;
 import com.jclaw.agent.tui.session.SessionService;
 import com.jclaw.agent.tui.workflow.WorkflowEventStore;
 import com.jclaw.agent.tui.workflow.WorkflowProjectionService;
+import com.jclaw.agent.tui.workflow.WorkflowRuntimeHints;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -17,16 +18,19 @@ import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryReposito
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.databind.ObjectMapper;
+import reactor.core.scheduler.Schedulers;
 
 import javax.sql.DataSource;
 
 @Configuration
+@ImportRuntimeHints(WorkflowRuntimeHints.class)
 public class AiConfiguration {
 
     @Bean
@@ -108,7 +112,9 @@ public class AiConfiguration {
 
     @Bean
     public MessageChatMemoryAdvisor messageChatMemoryAdvisor(ChatMemory chatMemory) {
-        return MessageChatMemoryAdvisor.builder(chatMemory).build();
+        return MessageChatMemoryAdvisor.builder(chatMemory)
+                .scheduler(Schedulers.boundedElastic())
+                .build();
     }
 
     @Bean

@@ -8,7 +8,7 @@ import dev.tamboui.toolkit.elements.Panel;
 import dev.tamboui.toolkit.event.EventResult;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.widgets.common.ScrollBarPolicy;
+import dev.tamboui.toolkit.elements.RichTextAreaElement.ScrollBarPolicy;
 
 import java.util.Arrays;
 import java.util.Locale;
